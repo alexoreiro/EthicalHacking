@@ -1,0 +1,20 @@
+Enumeration Folder
+This folder contains a collection of scripts and tools for performing enumeration tasks in penetration testing. These resources are designed to help gather information about target systems, networks, and services.
+
+Included Tools and Scripts
+nmap: A powerful network scanner to discover hosts and services.
+
+enum4linux: A tool for enumerating information from Windows systems via SMB.
+
+snmpcheck: A script to enumerate information from SNMP-enabled devices.
+
+dirb: A web content scanner to find hidden directories and files.
+
+dnsenum: A DNS enumeration tool to gather DNS information about a domain.
+
+Usage
+Each tool and script includes a brief description and example usage to help you get started. Refer to the individual tool's documentation for more detailed information.
+
+Disclaimer
+These tools are intended for educational and authorized penetration testing purposes only. Ensure you have proper authorization before using these tools on any network or system.
+
